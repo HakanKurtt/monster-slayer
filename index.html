@@ -59,22 +59,7 @@
                         </li>
                     </div>
                 </template>
-
-                    <!--<li class="li" v-for="(value, key, i) in log">
-                        <template v-if="key == 'mHit'" class="monster-turn">
-                            <p>Monster hits player for {{ value }} ({{i}})</p>
-                         </template>
-
-                        <template v-if="key == 'heal'" class="player-turn">
-                            <p>Player heals himself for {{ value }} ({{i}})</p>
-                        </template>
-
-                        <template v-if="key == 'pHit'" class="player-turn">
-                            <p>Player hits monster for {{ value }} ({{i}})</p>
-                        </template>
-                    </li> -->
-                
-                
+                                
             </ul>
         </div>
     </section>
@@ -153,9 +138,6 @@
 
 
                 },
-                populateList: function(){
-
-                },
                 heal: function(){
                     var playerHeal;
                     var monsterHit;
@@ -200,9 +182,6 @@
                 },
                 reset () {
                     Object.assign(this.$data, initialState());
-                },
-                xd: function(){
-                    console.log("merhaba");
                 }
             },
             watch: {
