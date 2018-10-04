@@ -36,13 +36,14 @@
             <button id="attack" @click="fight()">ATTACK</button>
             <button id="special-attack" @click="speacialAttack()">SPECIAL ATTACK</button>
             <button id="heal" @click="heal()">HEAL</button>
-            <button id="give-up">GIVE UP</button>
+            <button id="give-up" @click="reset()">GIVE UP</button>
         </div>
     </section>
     <section class="row log" v-show="showList">
         <div class="small-12 columns">
             <ul class="ul">
                 
+                <!--.slice().reverse() diziyi ters şekilde ekrana bastırmak için-->
                 <template class="li" v-for="value in log.slice().reverse()">
                     <div v-for="(v, k, i) in value">
                         <li v-if="k == 'mHit'" class="monster-turn">
@@ -80,6 +81,29 @@
 </div>
 
     <script>
+        function initialState(){
+            return {
+                start : true,
+                showList: false,
+                attack: true,
+                playerHp: 100,
+                monsterHp: 100,
+                playerWidth: 100,
+                monsterWidth: 100,
+                log: [],
+                playerStyle: {
+                    backgroundColor: "green",
+                    margin: 0,
+                    color: "white"
+                },
+                monsterStyle: {
+                    backgroundColor: "green",
+                    margin: 0,
+                    color: "white"
+                }
+            }
+        }
+
         new Vue({
             el: "#app",
             data: {
@@ -90,8 +114,6 @@
                 monsterHp: 100,
                 playerWidth: 100,
                 monsterWidth: 100,
-                playerHits: [],
-                monsterHits: [],
                 log: [],
                 playerStyle: {
                     backgroundColor: "green",
@@ -105,6 +127,9 @@
                 }
             },
             methods: {
+                function (){
+                    return initialState();
+                },
                 fight: function() {
 
                     if(this.showList == false){
@@ -140,7 +165,12 @@
                     playerHeal = Math.floor(Math.random() * (15 - 11 + 1)) + 11;
                     monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
 
+
                     this.playerHp= this.playerHp - monsterHit + playerHeal;
+
+                    if(this.playerHp > 100){
+                        this.playerHp = 100;
+                    }
                     
 
                     this.playerWidth= this.playerHp;  
@@ -167,6 +197,42 @@
 
                     this.log.push({mHit: monsterHit, pHit: playerSpeacialHit});
 
+                },
+                reset () {
+                    Object.assign(this.$data, initialState());
+                },
+                xd: function(){
+                    console.log("merhaba");
+                }
+            },
+            watch: {
+                playerHp: function(){
+
+                    if(this.playerHp <= 0){
+                        if(confirm("You lose. Do you want new game?")){
+                        //Player pressed the OK.
+                        this.reset();
+
+                        }else {
+                        //Player pressed the Cancel.
+                            this.start=true;
+
+
+                        }
+                    }
+                },
+                monsterHp: function(){
+
+                    if(this.monsterHp <= 0){
+                        if(confirm("You won! Do you want new game?")){
+                        //Player pressed the OK.
+                        this.reset();
+
+                        }else {
+                        //Player pressed the Cancel.
+                            this.start=true;
+                        }
+                    }
                 }
             }
         });
