@@ -12,8 +12,8 @@
         <div class="small-6 columns">
             <h1 class="text-center">YOU</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" :style="[userStyle, {width: userWidth+'%'}]">
-                    {{ userHp }}
+                <div class="healthbar text-center" :style="[playerStyle, {width: playerWidth+'%'}]">
+                    {{ playerHp }}
                 </div>
             </div>
         </div>
@@ -33,18 +33,47 @@
     </section>
     <section class="row controls" v-show="!start">
         <div class="small-12 columns">
-            <button id="attack" @click="fight">ATTACK</button>
-            <button id="special-attack">SPECIAL ATTACK</button>
-            <button id="heal">HEAL</button>
+            <button id="attack" @click="fight()">ATTACK</button>
+            <button id="special-attack" @click="speacialAttack()">SPECIAL ATTACK</button>
+            <button id="heal" @click="heal()">HEAL</button>
             <button id="give-up">GIVE UP</button>
         </div>
     </section>
     <section class="row log" v-show="showList">
         <div class="small-12 columns">
-            <ul>
-                <li>
+            <ul class="ul">
+                
+                <template class="li" v-for="value in log.slice().reverse()">
+                    <div v-for="(v, k, i) in value">
+                        <li v-if="k == 'mHit'" class="monster-turn">
+                                <p>Monster hits player for {{ v }}</p>
+                        </li>
+    
+                        <li v-else-if="k == 'heal'" class="player-turn">
+                            <p>Player heals himself for {{ v }}</p>
+                        </li>
+    
+                        <li v-else-if="k == 'pHit'" class="player-turn">
+                            <p>Player hits monster for {{ v }}</p>
+                        </li>
+                    </div>
+                </template>
 
-                </li>
+                    <!--<li class="li" v-for="(value, key, i) in log">
+                        <template v-if="key == 'mHit'" class="monster-turn">
+                            <p>Monster hits player for {{ value }} ({{i}})</p>
+                         </template>
+
+                        <template v-if="key == 'heal'" class="player-turn">
+                            <p>Player heals himself for {{ value }} ({{i}})</p>
+                        </template>
+
+                        <template v-if="key == 'pHit'" class="player-turn">
+                            <p>Player hits monster for {{ value }} ({{i}})</p>
+                        </template>
+                    </li> -->
+                
+                
             </ul>
         </div>
     </section>
@@ -56,11 +85,15 @@
             data: {
                 start : true,
                 showList: false,
-                userHp: 100,
+                attack: true,
+                playerHp: 100,
                 monsterHp: 100,
-                userWidth: 100,
+                playerWidth: 100,
                 monsterWidth: 100,
-                userStyle: {
+                playerHits: [],
+                monsterHits: [],
+                log: [],
+                playerStyle: {
                     backgroundColor: "green",
                     margin: 0,
                     color: "white"
@@ -73,18 +106,67 @@
             },
             methods: {
                 fight: function() {
-                    var userHit;
+
+                    if(this.showList == false){
+                        this.showList = true;
+                    }
+
+                    var playerHit;
                     var monsterHit;
                     
                     //randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-                    userHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                    playerHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                     monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
 
-                    this.userHp= this.userHp - monsterHit;
-                    this.monsterHp= this.monsterHp - userHit;
+                    this.playerHp= this.playerHp - monsterHit;
+                    this.monsterHp= this.monsterHp - playerHit;
 
-                    this.userWidth= this.userHp;
+                    this.playerWidth= this.playerHp;
                     this.monsterWidth= this.monsterHp;
+
+                    this.log.push({mHit: monsterHit, pHit: playerHit});
+
+
+                },
+                populateList: function(){
+
+                },
+                heal: function(){
+                    var playerHeal;
+                    var monsterHit;
+                    
+                    
+                    //randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+                    playerHeal = Math.floor(Math.random() * (15 - 11 + 1)) + 11;
+                    monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+
+                    this.playerHp= this.playerHp - monsterHit + playerHeal;
+                    
+
+                    this.playerWidth= this.playerHp;  
+
+                    this.log.push({mHit: monsterHit, heal: playerHeal});                  
+                },
+                speacialAttack: function() {
+
+                    if(this.showList == false){
+                        this.showList = true;
+                    }
+
+                    var playerSpeacialHit;
+                    var monsterHit;
+
+                    playerSpeacialHit = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+                    monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+
+                    this.playerHp = this.playerHp - monsterHit;
+                    this.monsterHp = this.monsterHp - playerSpeacialHit;
+
+                    this.playerWidth = this.playerHp;
+                    this.monsterWidth = this.monsterHp;
+
+                    this.log.push({mHit: monsterHit, pHit: playerSpeacialHit});
+
                 }
             }
         });
