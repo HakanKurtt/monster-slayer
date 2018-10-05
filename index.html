@@ -125,12 +125,22 @@
                     var monsterHit;
                     
                     //randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-                    playerHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
-                    monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                    playerHit = this.calculateDemage(5, 10);
+                    monsterHit = this.calculateDemage(5, 10);
+                    
 
                     this.playerHp= this.playerHp - monsterHit;
+
+                    if(this.checkWin()){ //check player win or not
+                        return;
+                    }
+
                     this.monsterHp= this.monsterHp - playerHit;
 
+                    if(this.checkWin()){ //check monster win or not
+                        return;
+                    }
+                    
                     this.playerWidth= this.playerHp;
                     this.monsterWidth= this.monsterHp;
 
@@ -144,11 +154,15 @@
                     
                     
                     //randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-                    playerHeal = Math.floor(Math.random() * (15 - 11 + 1)) + 11;
-                    monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                    playerHeal = this.calculateDemage(11, 15);
+                    monsterHit = this.calculateDemage(5, 10);
 
 
                     this.playerHp= this.playerHp - monsterHit + playerHeal;
+
+                    if(this.checkWin()){ //check monster win or not
+                        return;
+                    }
 
                     if(this.playerHp > 100){
                         this.playerHp = 100;
@@ -168,11 +182,20 @@
                     var playerSpeacialHit;
                     var monsterHit;
 
-                    playerSpeacialHit = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
-                    monsterHit = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                    playerSpeacialHit = this.calculateDemage(10, 20);
+                    monsterHit = this.calculateDemage(5, 10);
 
                     this.playerHp = this.playerHp - monsterHit;
+
+                    if(this.checkWin()){ //check player win or not
+                        return;
+                    }
+
                     this.monsterHp = this.monsterHp - playerSpeacialHit;
+
+                    if(this.checkWin()){ //check monster win or not
+                        return;
+                    }
 
                     this.playerWidth = this.playerHp;
                     this.monsterWidth = this.monsterHp;
@@ -180,40 +203,39 @@
                     this.log.push({mHit: monsterHit, pHit: playerSpeacialHit});
 
                 },
-                reset () {
-                    Object.assign(this.$data, initialState());
-                }
-            },
-            watch: {
-                playerHp: function(){
+                calculateDemage: function(min, max){
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                },
+                checkWin: function(){ //check if user or monster win or not
 
                     if(this.playerHp <= 0){
-                        if(confirm("You lose. Do you want new game?")){
-                        //Player pressed the OK.
-                        this.reset();
-
-                        }else {
-                        //Player pressed the Cancel.
+                        if(confirm("You lost. New game?")){
+                            //User clicked Ok
+                            this.reset();
+                        }else{
+                            //User clicked No.
                             this.start=true;
-
-
                         }
+                        return true;
+                    }else if(this.monsterHp <= 0){
+                        if(confirm("You win. New game?")){
+                            //user clicked ok
+                            this.reset();
+                        }else{
+                            //user clicked no
+                            this.start=true;
+                        }
+                        return true;
                     }
+
+                    return false; //continue to game while this false
+
                 },
-                monsterHp: function(){
-
-                    if(this.monsterHp <= 0){
-                        if(confirm("You won! Do you want new game?")){
-                        //Player pressed the OK.
-                        this.reset();
-
-                        }else {
-                        //Player pressed the Cancel.
-                            this.start=true;
-                        }
-                    }
+                reset () { //function that resetting data object to it's initial values
+                    Object.assign(this.$data, initialState());
                 }
             }
+            
         });
     </script>
 </body>
